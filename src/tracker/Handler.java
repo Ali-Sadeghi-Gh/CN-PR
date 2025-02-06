@@ -16,6 +16,14 @@ public record Handler(Socket socket, Integer id) implements Runnable {
 
     @Override
     public void run() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
+
         try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
             while (true) {
