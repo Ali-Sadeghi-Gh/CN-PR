@@ -1,22 +1,31 @@
 package peer;
 
+import common.File;
+
 import java.io.*;
 import java.net.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class Peer {
+    private static final Set<File> files = new HashSet<>();
     private static final String TRACKER_ADDRESS = "127.0.0.1";
     private static final int TRACKER_PORT = 6771;
+    private static int PORT;
     private static PrintWriter out;
     private static BufferedReader in;
 
     public static void main(String[] args) {
         connect();
         new Thread(new CLI()).start();
+        new Thread(new Listener()).start();
     }
 
     private static void connect() {
         try {
             Socket socket = new Socket(TRACKER_ADDRESS, TRACKER_PORT);
+            PORT = socket.getLocalPort();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     socket.close();
@@ -26,7 +35,7 @@ public class Peer {
             }));
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println(socket.getLocalPort());
+            System.out.println(PORT);
         } catch (IOException e) {
             System.out.println(e.getMessage());
             end();
@@ -35,6 +44,10 @@ public class Peer {
 
     static void end() {
         System.exit(0);
+    }
+
+    static int getPORT() {
+        return PORT;
     }
 
     static String sendRequest(String request) {
@@ -46,5 +59,23 @@ public class Peer {
             connect();
         }
         return "";
+    }
+
+    static boolean containsFile(File file) {
+        return files.contains(file);
+    }
+
+    static void addFile(File file) {
+        files.add(file);
+    }
+
+    static Set<File> getMyFiles() {
+        return files;
+    }
+
+    static Optional<File> getFile(String fileName) {
+        return files.stream()
+                .filter(f -> f.name().equals(fileName))
+                .findFirst();
     }
 }
