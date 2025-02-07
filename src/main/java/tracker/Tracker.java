@@ -3,7 +3,12 @@ package tracker;
 import common.File;
 import common.GetFileResult;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static common.LogWriter.write;
 
 public class Tracker {
     private static final int PORT = 6771;
@@ -11,13 +16,17 @@ public class Tracker {
     private static final Map<String, Set<Integer>> peers = new HashMap<>();
     private static final Map<String, File> files = new HashMap<>();
     private static final Map<Integer, String> addresses = new HashMap<>();
+    private static final String logFile = "all.txt";
 
     public static void main(String[] args) {
+        write(logFile, "start");
         new Thread(new CLI()).start();
         new Thread(new Manager()).start();
     }
 
     static void end() {
+        logInfo();
+        write(logFile, "end");
         System.exit(0);
     }
 
@@ -26,14 +35,17 @@ public class Tracker {
     }
 
     static Integer getId() {
+        write(logFile, "new id " + (lastId + 1));
         return ++lastId;
     }
 
     static void addAddress(Integer id, String address) {
         addresses.putIfAbsent(id, address);
+        logInfo();
     }
 
     static void endPeer(Integer id) {
+        write(logFile, "remove id " + id);
         addresses.remove(id);
         for (String fileName : peers.keySet()) {
             peers.get(fileName).remove(id);
@@ -42,12 +54,14 @@ public class Tracker {
                 files.remove(fileName);
             }
         }
+        logInfo();
     }
 
     static void addFile(Integer id, File file) {
         peers.putIfAbsent(file.name(), new HashSet<>());
         peers.get(file.name()).add(id);
         files.putIfAbsent(file.name(), file);
+        logInfo();
     }
 
     static GetFileResult getFile(String fileName) {
@@ -74,5 +88,9 @@ public class Tracker {
 
     static boolean isValid(Integer id) {
         return addresses.containsKey(id);
+    }
+
+    private static void logInfo() {
+
     }
 }

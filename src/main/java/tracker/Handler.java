@@ -26,6 +26,7 @@ public class Handler implements Runnable {
         this.message = message;
         this.clientAddress = clientAddress;
         this.clientPort = clientPort;
+        Runtime.getRuntime().addShutdownHook(new Thread(socket::close));
     }
 
     @Override
