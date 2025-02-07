@@ -16,7 +16,7 @@ public class Manager implements Runnable {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(new Handler(clientSocket,
-                        getId(String.valueOf(clientSocket.getPort())))).start();
+                        getId())).start();
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());

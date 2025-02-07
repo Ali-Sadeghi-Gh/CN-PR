@@ -6,13 +6,14 @@ import java.io.*;
 import java.net.*;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 public class Peer {
     private static final Set<File> files = new HashSet<>();
     private static final String TRACKER_ADDRESS = "127.0.0.1";
     private static final int TRACKER_PORT = 6771;
-    private static int PORT;
+    private static final int PORT = new Random().nextInt(10000, 65000);
     private static PrintWriter out;
     private static BufferedReader in;
 
@@ -25,7 +26,6 @@ public class Peer {
     private static void connect() {
         try {
             Socket socket = new Socket(TRACKER_ADDRESS, TRACKER_PORT);
-            PORT = socket.getLocalPort();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     socket.close();
@@ -35,7 +35,7 @@ public class Peer {
             }));
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println(PORT);
+            out.println("port " + PORT);
         } catch (IOException e) {
             System.out.println(e.getMessage());
             end();
@@ -46,7 +46,7 @@ public class Peer {
         System.exit(0);
     }
 
-    static int getPORT() {
+    static int getServerPORT() {
         return PORT;
     }
 

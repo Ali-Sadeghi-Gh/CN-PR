@@ -36,7 +36,7 @@ public record Sender(Socket socket) implements Runnable {
                     Optional<File> fileOptional = getFile(parts[1]);
                     if (fileOptional.isPresent()) {
                         File file = fileOptional.get();
-                        out.println("found " + file.name() + file.size() + file.content());
+                        out.println("found " + file.name() + " " + file.size() + " " + file.content());
                         System.out.println(request + " done");
                     } else
                         out.println("not-found");

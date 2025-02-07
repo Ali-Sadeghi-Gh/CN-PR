@@ -25,9 +25,12 @@ public class Tracker {
         return PORT;
     }
 
-    static Integer getId(String address) {
-        addresses.putIfAbsent(++lastId, address);
-        return lastId;
+    static Integer getId() {
+        return ++lastId;
+    }
+
+    static void addAddress(Integer id, String address) {
+        addresses.putIfAbsent(id, address);
     }
 
     static void endPeer(Integer id) {

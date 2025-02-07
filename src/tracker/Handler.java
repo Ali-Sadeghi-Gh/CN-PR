@@ -35,10 +35,11 @@ public record Handler(Socket socket, Integer id) implements Runnable {
                 String[] parts = request.split(" ");
                 String command = parts[0];
 
-                if (command.equals("share"))
-                    out.println(handleShare(parts));
-                else if (command.equals("get"))
-                    out.println(handleGet(parts));
+                switch (command) {
+                    case "share" -> out.println(handleShare(parts));
+                    case "get" -> out.println(handleGet(parts));
+                    case "port" -> addAddress(id, parts[1]);
+                }
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());

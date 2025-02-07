@@ -32,7 +32,7 @@ public class CLI implements Runnable {
         switch (command) {
             case "q" -> end();
             case "add-file" -> addFileAndPrint(parts[1], Integer.parseInt(parts[2]), parts[3]);
-            case "get-my-files" -> printMyFiles();
+            case "my-files" -> printMyFiles();
             case "share" -> shareFile(parts[1], parts[2]);
             case "get" -> getPeersForFile(parts[1]);
             case "get-file" -> getFile(parts[1], parts[2]);
@@ -90,6 +90,7 @@ public class CLI implements Runnable {
                         .content(result[3])
                         .build();
                 addFile(file);
+                shareFile(file.name(), String.valueOf(file.size()));
             } else
                 System.out.println(result[0]);
         } catch (IOException e) {
