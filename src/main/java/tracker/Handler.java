@@ -2,26 +2,26 @@ package tracker;
 
 import common.File;
 import common.GetFileResult;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import static common.LogWriter.write;
 import static java.lang.String.join;
 import static tracker.Tracker.*;
 
-@Slf4j
 public class Handler implements Runnable {
     private final DatagramSocket socket;
     private final String message;
     private Integer id;
     private final InetAddress clientAddress;
     private final int clientPort;
+    private final String logFile = "request.txt";
 
     public Handler(DatagramSocket socket, String message, InetAddress clientAddress, int clientPort) {
-        log.info("received request: " + message);
+        write(logFile, "received request: " + message);
         this.socket = socket;
         this.message = message;
         this.clientAddress = clientAddress;
@@ -62,7 +62,7 @@ public class Handler implements Runnable {
     }
 
     private void sendResult(String response) throws IOException {
-        log.info("response to request from " + id + ": " + response);
+        write(logFile, "response to request from " + id + ": " + response);
         byte[] responseBytes = response.getBytes();
         DatagramPacket responsePacket = new DatagramPacket(responseBytes, responseBytes.length, clientAddress, clientPort);
         socket.send(responsePacket);
