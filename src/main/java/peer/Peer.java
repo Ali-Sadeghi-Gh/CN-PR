@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+import static common.LogReader.read;
+import static common.LogWriter.write;
+
 public class Peer {
     private static final Set<File> files = new HashSet<>();
     private static final String TRACKER_ADDRESS = "127.0.0.1";
@@ -16,6 +19,7 @@ public class Peer {
     private static final int PORT = new Random().nextInt(10000, 65000);
     private static DatagramSocket socket;
     private static Integer peerId = -1;
+    private static final String logFile = "peer.txt";
 
     public static void main(String[] args) {
         connect();
@@ -53,6 +57,8 @@ public class Peer {
     static String sendRequest(String request) {
         try {
             String finalRequest = peerId + " " + request;
+            if (peerId != -1)
+                write(peerId + logFile, "request: " + finalRequest);
             byte[] requestBytes = finalRequest.getBytes();
             DatagramPacket requestPacket = new DatagramPacket(requestBytes, requestBytes.length,
                     InetAddress.getByName(TRACKER_ADDRESS), TRACKER_PORT);
@@ -67,6 +73,8 @@ public class Peer {
                 getId();
                 return "try again";
             }
+            if (peerId != -1)
+                write(peerId + logFile, "result: " + result);
             return result;
         } catch (IOException e) {
             System.out.println("Error sending request: " + e.getMessage());
@@ -90,5 +98,9 @@ public class Peer {
         return files.stream()
                 .filter(f -> f.name().equals(fileName))
                 .findFirst();
+    }
+
+    static void printLogs() {
+        System.out.println(read(peerId + logFile));
     }
 }

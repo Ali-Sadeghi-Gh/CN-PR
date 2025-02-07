@@ -37,6 +37,7 @@ public class CLI implements Runnable {
             case "get" -> getPeersForFile(parts[1]);
             case "get-file" -> getFile(parts[1], parts[2]);
             case "get-id" -> getId();
+            case "logs" -> printLogs();
             default -> System.out.println("Unexpected command: " + command);
         }
     }
