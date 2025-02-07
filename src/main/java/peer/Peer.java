@@ -12,7 +12,7 @@ import java.util.Set;
 public class Peer {
     private static final Set<File> files = new HashSet<>();
     private static final String TRACKER_ADDRESS = "127.0.0.1";
-    private static final int TRACKER_PORT = 6771;
+    private static final int TRACKER_PORT = 6777;
     private static final int PORT = new Random().nextInt(10000, 65000);
     private static DatagramSocket socket;
     private static Integer peerId = -1;

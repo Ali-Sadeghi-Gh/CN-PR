@@ -11,7 +11,7 @@ import java.util.Set;
 import static common.LogWriter.write;
 
 public class Tracker {
-    private static final int PORT = 6771;
+    private static final int PORT = 6777;
     private static Integer lastId = 0;
     private static final Map<String, Set<Integer>> peers = new HashMap<>();
     private static final Map<String, File> files = new HashMap<>();
@@ -91,6 +91,23 @@ public class Tracker {
     }
 
     private static void logInfo() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\nlastId: ")
+                .append(lastId)
+                .append("\npeers:\n");
+        for (String key : peers.keySet()) {
+            builder.append(key).append(": ");
+            for (Integer i : peers.get(key))
+                builder.append(i).append(", ");
+            builder.append("\n");
+        }
+        builder.append("addresses:\n");
+        for (Integer i : addresses.keySet())
+            builder.append(i)
+                    .append(": ")
+                    .append(addresses.get(i))
+                    .append(", ");
 
+        write(logFile, builder.append("\n").toString());
     }
 }
