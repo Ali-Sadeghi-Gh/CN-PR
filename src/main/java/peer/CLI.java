@@ -31,11 +31,13 @@ public class CLI implements Runnable {
         String command = parts[0];
         switch (command) {
             case "q" -> end();
-            case "add-file" -> addFileAndPrint(parts[1], Integer.parseInt(parts[2]), parts[3]);
+            case "add-file" -> addFileAndPrint(parts[1], Integer.parseInt(parts[2]));
             case "my-files" -> printMyFiles();
             case "share" -> shareFile(parts[1], parts[2]);
             case "get" -> getPeersForFile(parts[1]);
             case "get-file" -> getFile(parts[1], parts[2]);
+            case "get-id" -> getId();
+            case "logs" -> printLogs();
             default -> System.out.println("Unexpected command: " + command);
         }
     }
@@ -62,11 +64,11 @@ public class CLI implements Runnable {
             System.out.println(file.name() + " " + file.size() + " " + file.content());
     }
 
-    private void addFileAndPrint(String fileName, int size, String content) {
+    private void addFileAndPrint(String fileName, int size) {
         File file = File.builder()
                 .name(fileName)
                 .size(size)
-                .content(content)
+                .content(scanner.nextLine())
                 .build();
 
         if (containsFile(file)) {
@@ -87,7 +89,7 @@ public class CLI implements Runnable {
                 File file = File.builder()
                         .name(result[1])
                         .size(Integer.parseInt(result[2]))
-                        .content(result[3])
+                        .content(in.readLine())
                         .build();
                 addFile(file);
                 shareFile(file.name(), String.valueOf(file.size()));

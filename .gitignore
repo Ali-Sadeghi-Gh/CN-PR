@@ -30,3 +30,22 @@ bin/
 ### Mac OS ###
 .DS_Store
 /.idea/
+/target/classes/resources/all.txt
+/target/classes/peer/CLI.class
+/target/classes/tracker/CLI.class
+/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+/target/classes/common/File$FileBuilder.class
+/target/classes/common/File.class
+/target/classes/common/GetFileResult$GetFileResultBuilder.class
+/target/classes/common/GetFileResult.class
+/target/classes/tracker/Handler.class
+/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/target/classes/peer/Listener.class
+/target/classes/common/LogReader.class
+/target/classes/common/LogWriter.class
+/target/classes/tracker/Manager.class
+/target/my-app-1.0-SNAPSHOT.jar
+/target/classes/peer/Peer.class
+/target/maven-archiver/pom.properties
+/target/classes/peer/Sender.class
+/target/classes/tracker/Tracker.class
