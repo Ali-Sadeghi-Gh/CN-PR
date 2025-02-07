@@ -61,6 +61,11 @@ public class Tracker {
         peers.putIfAbsent(file.name(), new HashSet<>());
         peers.get(file.name()).add(id);
         files.putIfAbsent(file.name(), file);
+
+        StringBuilder builder = new StringBuilder().append(file.name()).append(": ");
+        for (Integer i : peers.get(file.name()))
+            builder.append(i).append(", ");
+        write(file.name() + ".txt", builder.append("\n").toString());
         logInfo();
     }
 

@@ -2,6 +2,7 @@ package tracker;
 
 import java.util.Scanner;
 
+import static common.LogReader.read;
 import static tracker.Tracker.end;
 
 public class CLI implements Runnable {
@@ -18,8 +19,22 @@ public class CLI implements Runnable {
     private void handle(String command) {
         switch (command) {
             case "q" -> end();
-            case "x" -> System.out.println("x");
+            case "all-logs" -> printAllLogs();
+            case "request-logs" -> printRequestLogs();
+            case "file-logs" -> printFileLogs(scanner.nextLine());
             default -> System.out.println("Unexpected command: " + command);
         }
+    }
+
+    private void printFileLogs(String name) {
+        System.out.println(read(name + ".txt"));
+    }
+
+    private void printAllLogs() {
+        System.out.println(read("all.txt"));
+    }
+
+    private void printRequestLogs() {
+        System.out.println(read("request.txt"));
     }
 }
