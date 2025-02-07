@@ -14,7 +14,7 @@ public class LogReader {
                 builder.append(line).append("\n");
             }
         } catch (IOException e) {
-            System.err.println("Error reading log file: " + e.getMessage());
+            System.out.println("Error reading log file: " + e.getMessage());
         }
         return builder.toString();
     }

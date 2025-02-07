@@ -21,3 +21,25 @@ x: 1
 addresses:
 1: 27369, 
 Fri Feb 07 21:28:02 GMT+03:30 2025 end
+Fri Feb 07 21:37:54 GMT+03:30 2025 start
+Fri Feb 07 21:37:57 GMT+03:30 2025 new id 1
+Fri Feb 07 21:37:57 GMT+03:30 2025 
+lastId: 1
+peers:
+addresses:
+1: 27369, 
+
+Fri Feb 07 21:37:59 GMT+03:30 2025 new id 2
+Fri Feb 07 21:37:59 GMT+03:30 2025 
+lastId: 2
+peers:
+addresses:
+1: 27369, 2: 31523, 
+
+Fri Feb 07 21:38:49 GMT+03:30 2025 
+lastId: 2
+peers:
+x: 2, 
+addresses:
+1: 27369, 2: 31523, 
+
