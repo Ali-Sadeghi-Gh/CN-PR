@@ -30,14 +30,14 @@ public class Peer {
                 System.out.println(sendRequest("exit"));
                 socket.close();
             }));
-            getPort();
+            getId();
         } catch (IOException e) {
             System.out.println(e.getMessage());
             end();
         }
     }
 
-    private static void getPort() {
+    static void getId() {
         peerId = Integer.valueOf(sendRequest("port " + PORT));
         System.out.println("peerId is: " + peerId);
     }
@@ -64,7 +64,7 @@ public class Peer {
             socket.receive(responsePacket);
             String result = new String(responsePacket.getData(), 0, responsePacket.getLength());
             if (result.equals("get-port")) {
-                getPort();
+                getId();
                 return "try again";
             }
             return result;
