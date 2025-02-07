@@ -14,8 +14,8 @@ public class Peer {
     private static final String TRACKER_ADDRESS = "127.0.0.1";
     private static final int TRACKER_PORT = 6771;
     private static final int PORT = new Random().nextInt(10000, 65000);
-    private static PrintWriter out;
-    private static BufferedReader in;
+    private static DatagramSocket socket;
+    private static Integer peerId = -1;
 
     public static void main(String[] args) {
         connect();
@@ -25,21 +25,21 @@ public class Peer {
 
     private static void connect() {
         try {
-            Socket socket = new Socket(TRACKER_ADDRESS, TRACKER_PORT);
+            socket = new DatagramSocket(PORT);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                System.out.println(sendRequest("exit"));
+                socket.close();
             }));
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out.println("port " + PORT);
+            getPort();
         } catch (IOException e) {
             System.out.println(e.getMessage());
             end();
         }
+    }
+
+    private static void getPort() {
+        peerId = Integer.valueOf(sendRequest("port " + PORT));
+        System.out.println("peerId is: " + peerId);
     }
 
     static void end() {
@@ -51,12 +51,25 @@ public class Peer {
     }
 
     static String sendRequest(String request) {
-        out.println(request);
         try {
-            return in.readLine();
+            String finalRequest = peerId + " " + request;
+            byte[] requestBytes = finalRequest.getBytes();
+            DatagramPacket requestPacket = new DatagramPacket(requestBytes, requestBytes.length,
+                    InetAddress.getByName(TRACKER_ADDRESS), TRACKER_PORT);
+            socket.send(requestPacket);
+
+            byte[] buffer = new byte[1024];
+            DatagramPacket responsePacket = new DatagramPacket(buffer, buffer.length);
+
+            socket.receive(responsePacket);
+            String result = new String(responsePacket.getData(), 0, responsePacket.getLength());
+            if (result.equals("get-port")) {
+                getPort();
+                return "try again";
+            }
+            return result;
         } catch (IOException e) {
-            System.out.println("try to reconnect");
-            connect();
+            System.out.println("Error sending request: " + e.getMessage());
         }
         return "";
     }

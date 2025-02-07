@@ -3,53 +3,70 @@ package tracker;
 import common.File;
 import common.GetFileResult;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 import static java.lang.String.join;
 import static tracker.Tracker.*;
 
-public record Handler(Socket socket, Integer id) implements Runnable {
+public class Handler implements Runnable {
+    private final DatagramSocket socket;
+    private final String message;
+    private Integer id;
+    private final InetAddress clientAddress;
+    private final int clientPort;
+
+    public Handler(DatagramSocket socket, String message, InetAddress clientAddress, int clientPort) {
+        this.socket = socket;
+        this.message = message;
+        this.clientAddress = clientAddress;
+        this.clientPort = clientPort;
+    }
 
     @Override
     public void run() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        try {
+            String[] parts = message.split(" ");
+            id = Integer.valueOf(parts[0]);
+            if (!parts[1].equals("port") && !isValid(id)) {
+                sendResult("get-port");
+                return;
             }
-        }));
-
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
-            while (true) {
-                String request = in.readLine();
-                if (request == null) {
+            String command = parts[1];
+            String response;
+            switch (command) {
+                case "share" -> response = handleShare(parts);
+                case "get" -> response = handleGet(parts);
+                case "port" -> {
+                    id = getId();
+                    addAddress(id, parts[2]);
+                    response = String.valueOf(id);
+                }
+                case "exit" -> {
                     endPeer(id);
-                    break;
+                    response = "exited";
                 }
-                String[] parts = request.split(" ");
-                String command = parts[0];
-
-                switch (command) {
-                    case "share" -> out.println(handleShare(parts));
-                    case "get" -> out.println(handleGet(parts));
-                    case "port" -> addAddress(id, parts[1]);
-                }
+                default -> response = "bad-request";
             }
-        } catch (IOException e) {
+
+            sendResult(response);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
+    private void sendResult(String response) throws IOException {
+        byte[] responseBytes = response.getBytes();
+        DatagramPacket responsePacket = new DatagramPacket(responseBytes, responseBytes.length, clientAddress, clientPort);
+        socket.send(responsePacket);
+    }
+
     private String handleShare(String[] parts) {
         try {
-            String fileName = parts[1];
-            int fileSize = Integer.parseInt(parts[2]);
+            String fileName = parts[2];
+            int fileSize = Integer.parseInt(parts[3]);
             addFile(id, File.builder()
                     .name(fileName)
                     .size(fileSize)
@@ -63,7 +80,7 @@ public record Handler(Socket socket, Integer id) implements Runnable {
 
     private String handleGet(String[] parts) {
         try {
-            String fileName = parts[1];
+            String fileName = parts[2];
             GetFileResult result = getFile(fileName);
             if (result.found()) {
                 return "found " + result.file().name() + " " + result.file().size() + " " + join(" ", result.addresses());

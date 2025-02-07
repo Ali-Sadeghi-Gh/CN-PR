@@ -65,8 +65,14 @@ public class Tracker {
 
     private static Set<String> idsToAddresses(Set<Integer> ids) {
         Set<String> result = new HashSet<>();
-        for (Integer id : ids)
-            result.add(addresses.get(id));
+        for (Integer id : ids) {
+            if (isValid(id))
+                result.add(addresses.get(id));
+        }
         return result;
+    }
+
+    static boolean isValid(Integer id) {
+        return addresses.containsKey(id);
     }
 }
