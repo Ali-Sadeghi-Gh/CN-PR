@@ -87,7 +87,7 @@ public class CLI implements Runnable {
                 File file = File.builder()
                         .name(result[1])
                         .size(Integer.parseInt(result[2]))
-                        .content(result[3])
+                        .content(in.readLine())
                         .build();
                 addFile(file);
                 shareFile(file.name(), String.valueOf(file.size()));
